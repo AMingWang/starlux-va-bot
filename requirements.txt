@@ -3,9 +3,9 @@ from discord.ext import commands, tasks
 import random
 import requests
 
-TOKEN = "YOUR_TOKEN_HERE"
-GUILD_ID = 1234567890     # 填你的伺服器ID
-ANNOUNCE_CHANNEL_ID = 1234567890  # 填你的公告頻道ID
+TOKEN = "MTM4OTk4MjI1NzAxMTIzMjgxOA.GPxTju.Md0QYpiHz6pRgVRokek9PBGfzfSXmqa6smRG00"
+GUILD_ID = 1279296034945896471     # 填你的伺服器ID
+ANNOUNCE_CHANNEL_ID = 1307623989774123008  # 填你的公告頻道ID
 
 intents = discord.Intents.default()
 intents.members = True
@@ -69,9 +69,9 @@ async def daily_announce():
     from datetime import datetime
     now = datetime.now()
     if now.hour == 18:
-        channel = bot.get_channel(ANNOUNCE_CHANNEL_ID)
+        channel = bot.get_channel(1307623989774123008
         if channel:
-            await channel.send("⭐ 提醒：明天 RCTP - RJTT 集體飛行，請提前準備！")
+            await channel.send("")
 
 daily_announce.start()
 
