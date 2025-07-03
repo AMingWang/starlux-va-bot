@@ -1,13 +1,12 @@
-import os
 import discord
 from discord.ext import commands, tasks
 import random
 from datetime import datetime
 
-# ✅ 從 Railway / Render 的環境變數讀取設定
-TOKEN = os.getenv("TOKEN")
-GUILD_ID = int(os.getenv("GUILD_ID"))
-ANNOUNCE_CHANNEL_ID = int(os.getenv("ANNOUNCE_CHANNEL_ID"))
+# ✅ 直接寫死你的值
+TOKEN = "MTM4OTk4MjI1NzAxMTIzMjgxOA.GPxTju.Md0QYpiHz6pRgVRokek9PBGfzfSXmqa6smRG00"
+GUILD_ID = 1279296034945896471
+ANNOUNCE_CHANNEL_ID = 1307623989774123008
 
 # 設定 Discord Intents
 intents = discord.Intents.default()
@@ -25,18 +24,15 @@ missions = [
     "執行 RPLL-RCTP 客運航班，模擬油量偏低情境"
 ]
 
-# BOT 啟動事件
 @bot.event
 async def on_ready():
     print(f"✅ BOT 已上線：{bot.user}")
     daily_announce.start()
 
-# 測試指令
 @bot.command()
 async def ping(ctx):
     await ctx.send("🏓 Pong! BOT 正常運作中。")
 
-# 驗證指令：給「飛行員」身分組
 @bot.command()
 async def verify(ctx, member: discord.Member):
     role = discord.utils.get(ctx.guild.roles, name="飛行員")
@@ -46,7 +42,6 @@ async def verify(ctx, member: discord.Member):
     else:
         await ctx.send("⚠️ 找不到 '飛行員' 身分組，請先建立。")
 
-# 航班公告指令
 @bot.command()
 async def announce(ctx, *, msg):
     channel = bot.get_channel(ANNOUNCE_CHANNEL_ID)
@@ -56,13 +51,11 @@ async def announce(ctx, *, msg):
     else:
         await ctx.send("❌ 找不到公告頻道。")
 
-# 隨機任務指令
 @bot.command()
 async def mission(ctx):
     selected = random.choice(missions)
     await ctx.send(f"✈️ 今日隨機任務：{selected}")
 
-# 每日 18:00 自動公告提醒
 @tasks.loop(minutes=60)
 async def daily_announce():
     now = datetime.now()
@@ -71,5 +64,4 @@ async def daily_announce():
         if channel:
             await channel.send("⭐ 提醒：明天 RCTP - RJTT 集體飛行，請提前準備！")
 
-# 啟動 BOT
 bot.run(TOKEN)
