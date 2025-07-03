@@ -2,20 +2,19 @@ import os
 import discord
 from discord.ext import commands, tasks
 import random
-import requests
 from datetime import datetime
 
-# ✅ 從環境變數讀取（由 Railway/Render 設定）
+# ✅ 從 Railway / Render 的環境變數讀取設定
 TOKEN = os.getenv("TOKEN")
 GUILD_ID = int(os.getenv("GUILD_ID"))
 ANNOUNCE_CHANNEL_ID = int(os.getenv("ANNOUNCE_CHANNEL_ID"))
-AVWX_TOKEN = os.getenv("AVWX_TOKEN")
 
-# 建立 Intents
+# 設定 Discord Intents
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
+# 建立 BOT
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 # 任務清單
@@ -26,15 +25,18 @@ missions = [
     "執行 RPLL-RCTP 客運航班，模擬油量偏低情境"
 ]
 
+# BOT 啟動事件
 @bot.event
 async def on_ready():
     print(f"✅ BOT 已上線：{bot.user}")
     daily_announce.start()
 
+# 測試指令
 @bot.command()
 async def ping(ctx):
     await ctx.send("🏓 Pong! BOT 正常運作中。")
 
+# 驗證指令：給「飛行員」身分組
 @bot.command()
 async def verify(ctx, member: discord.Member):
     role = discord.utils.get(ctx.guild.roles, name="飛行員")
@@ -44,6 +46,7 @@ async def verify(ctx, member: discord.Member):
     else:
         await ctx.send("⚠️ 找不到 '飛行員' 身分組，請先建立。")
 
+# 航班公告指令
 @bot.command()
 async def announce(ctx, *, msg):
     channel = bot.get_channel(ANNOUNCE_CHANNEL_ID)
@@ -53,28 +56,13 @@ async def announce(ctx, *, msg):
     else:
         await ctx.send("❌ 找不到公告頻道。")
 
+# 隨機任務指令
 @bot.command()
 async def mission(ctx):
     selected = random.choice(missions)
     await ctx.send(f"✈️ 今日隨機任務：{selected}")
 
-@bot.command()
-async def metar(ctx, icao):
-    if not AVWX_TOKEN:
-        await ctx.send("⚠️ 尚未設定 AVWX_TOKEN，請先在環境變數中設定。")
-        return
-    try:
-        response = requests.get(
-            f"https://avwx.rest/api/metar/{icao}?token={AVWX_TOKEN}"
-        )
-        if response.status_code == 200:
-            data = response.json()
-            await ctx.send(f"📡 {icao.upper()} METAR：{data['raw']}")
-        else:
-            await ctx.send("❌ 無法取得 METAR 資料。")
-    except Exception:
-        await ctx.send("⚠️ 查詢失敗，請稍後再試。")
-
+# 每日 18:00 自動公告提醒
 @tasks.loop(minutes=60)
 async def daily_announce():
     now = datetime.now()
@@ -83,4 +71,5 @@ async def daily_announce():
         if channel:
             await channel.send("⭐ 提醒：明天 RCTP - RJTT 集體飛行，請提前準備！")
 
+# 啟動 BOT
 bot.run(TOKEN)
