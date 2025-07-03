@@ -6,9 +6,9 @@ import requests
 from datetime import datetime
 
 # ✅ 從環境變數讀取（由 Railway/Render 設定）
-TOKEN = os.getenv("MTM4OTk4MjI1NzAxMTIzMjgxOA.GtqnFd.3goXet3X63TcYzYZsXuCHnCg_85by8mEmoplq0")
-GUILD_ID = int(os.getenv("1279296034945896471"))
-ANNOUNCE_CHANNEL_ID = int(os.getenv("1307623989774123008"))
+TOKEN = os.getenv("TOKEN")
+GUILD_ID = int(os.getenv("GUILD_ID"))
+ANNOUNCE_CHANNEL_ID = int(os.getenv("ANNOUNCE_CHANNEL_ID"))
 AVWX_TOKEN = os.getenv("AVWX_TOKEN")
 
 # 建立 Intents
